@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .box {
+      background: #111;
+      padding: 32px 28px;
+      border-radius: 16px;
+      text-align: center;
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    h3 {
+      margin: 0 0 24px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    input:focus {
+      outline: none;
+      border-color: #00bfff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    button {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background: transparent;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      background: #fff;
+      color: #000;
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .qr-container {
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    img {
+      display: block;
+      width: 180px;
+      height: 180px;
+    }
+    .downloads {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    a {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+    a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h3>QR Üretici</h3>
+  <input id="link" placeholder="Linki buraya yapıştır..." />
+  <button onclick="generateQR()">QR Oluştur</button>
+
+  <div class="qr-container" id="qrContainer" style="display: none;">
+    <img id="qrImage" />
+  </div>
+
+  <div class="downloads" id="downloadBtns" style="display: none;">
+    <a id="pngDownload" download="qr.png">PNG İndir</a>
+    <a id="svgDownload" download="qr.svg">SVG İndir</a>
+  </div>
+</div>
+
+<script>
+  async function generateQR() {
+    const link = document.getElementById("link").value.trim();
+    if (!link) return alert("Lütfen bir link girin");
+
+    // PNG
+    const png = await QRCode.toDataURL(link, { width: 300, margin: 2 });
+    document.getElementById("qrImage").src = png;
+    document.getElementById("pngDownload").href = png;
+
+    // SVG
+    const svg = await QRCode.toString(link, { type: "svg", margin: 2 });
+    document.getElementById("svgDownload").href =
+      "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+
+    // Show QR and download buttons
+    document.getElementById("qrContainer").style.display = "inline-block";
+    document.getElementById("downloadBtns").style.display = "flex";
+  }
+
+  // Generate on Enter key
+  document.getElementById("link").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") generateQR();
+  });
+</script>
+
+</body>
+</html>
